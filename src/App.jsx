@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 const SECTORS = [
   { id: "food", label: "Food & FMCG", icon: "🌾", baseImportDep: 85, bufferWeeks: 16, freightShare: 0.08, airShare: 0.05 },
@@ -67,11 +67,7 @@ const BASE_AIR_RATE = 4.2; // USD per kg
 const BASE_INSURANCE = 0.0025; // % hull value
 const BASE_OIL = 75; // USD/bbl pre-conflict
 
-function formatUSD(n) {
-  if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
-  if (n >= 1000) return `$${(n / 1000).toFixed(0)}K`;
-  return `$${n.toFixed(0)}`;
-}
+
 
 function RiskMeter({ value, max = 100, color }) {
   const pct = Math.min((value / max) * 100, 100);
@@ -112,7 +108,6 @@ function Ticker({ items }) {
 
 export default function App() {
   const [scenario, setScenario] = useState("sustained");
-  const [selectedSectors, setSelectedSectors] = useState(["food", "pharma", "electronics"]);
   const [week, setWeek] = useState(4);
   const [activeTab, setActiveTab] = useState("costs");
   const [animating, setAnimating] = useState(false);
@@ -123,8 +118,6 @@ export default function App() {
   const airRate = BASE_AIR_RATE * ((sc.airMult[0] + sc.airMult[1]) / 2);
   const oilPrice = (sc.oilRange[0] + sc.oilRange[1]) / 2;
   const insurancePct = BASE_INSURANCE * sc.insuranceMult;
-
-  const weekProgress = week / 26;
 
   function getSectorImpact(sector) {
     const freightImpact = sector.freightShare * (freightRate / BASE_FREIGHT_RATE - 1) * 100;
